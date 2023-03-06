@@ -1,0 +1,7 @@
+POST https://api.expresso.pr.gov.br/celepar/user/bind
+Content-Type: application/json 
+
+{
+    "username": "KB4_02",
+    "password": "aeCib66yai"
+}

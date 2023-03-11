@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://ee95-2804-214-86ec-1cd9-a58f-6f99-9703-1997.sa.ngrok.io']
+CSRF_TRUSTED_ORIGINS = ['https://solo-authorization.azurewebsites.net']
 
 # Application definition
 

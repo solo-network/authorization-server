@@ -33,9 +33,9 @@
     </div>
 
     {% if model.scopes is not None %}
-      <h4 id="permissions">Permissions</h4>
+      <h4 id="permissions">Permissões</h4>
       <div class="indent">
-        <p>The application is requesting the following permissions.</p>
+        <p>A aplicação está requesitando as seguintes permissões.</p>
         <dl id="scope-list">
           {% for scope in model.scopes %}
             <dt>{{ scope.name }}</dt>
@@ -45,18 +45,18 @@
       </div>
     {% endif %}
 
-    <h4 id="authorization">Authorization</h4>
+    <h4 id="authorization">Autorização</h4>
     <div class="indent">
       {% if model.userName is not None %}
         <p>Hello {{ model.userName }},</p>
       {% endif %}
-      <p>Do you grant authorization to the application?</p>
+      <p>Você autoriza essa aplicação?</p>
 
       <form id="authorization-form" action="{% url 'api:authorization_decision' %}" method="post">
         {% csrf_token %}
         {% if model.loginRequired %}
           <div id="login-fields" class="indent">
-            <div id="login-prompt">Input Login ID and password.</div>
+            <div id="login-prompt">Insira seu usuário e senha Celepar.</div>
             <input type="text" id="loginId" name="loginId" placeholder="Login ID"
                    class="font-default" required value="{{ model.loginId }}"
                    {{ model.loginIdReadOnly }}>

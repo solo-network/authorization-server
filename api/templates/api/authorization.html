@@ -37,10 +37,12 @@
       <div class="indent">
         <p>A aplicação está requesitando as seguintes permissões.</p>
         <dl id="scope-list">
-          {% for scope in model.scopes %}
+          <dt>Compartilhamento com App terceiros</dt>
+          <dd>Compartilhar dados de e-mail, nome e sobrenome com a aplicação KnowBe4</dd>
+          <!-- {% for scope in model.scopes %}
             <dt>{{ scope.name }}</dt>
             <dd>{{ scope.description }}</dd>
-          {% endfor %}
+          {% endfor %} -->
         </dl>
       </div>
     {% endif %}
@@ -65,8 +67,7 @@
           </div>
         {% endif %}
         <div id="authorization-form-buttons">
-          <input type="submit" name="authorized" id="authorize-button" value="Authorize" class="font-default"/>
-          <input type="submit" name="denied"     id="deny-button"      value="Deny"      class="font-default"/>
+          <input type="submit" name="authorized" id="authorize-button" value="Autorizar" class="font-default"/>
         </div>
       </form>
     </div>

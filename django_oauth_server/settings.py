@@ -23,7 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'wo(@ggo#^@1=3d8#f-y$zg@&&qxgono0!-+qo2sxtne=0)a_)#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.getenv("Djangoenv") == 'True':
+    DEBUG = True
+else: 
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 

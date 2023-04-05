@@ -30,7 +30,7 @@ else:
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://solo-authorization.azurewebsites.net']
+CSRF_TRUSTED_ORIGINS = ['https://solo-authorization.azurewebsites.net', 'https://ciber.universidadecorporativa.celepar.pr.gov.br']
 
 # Application definition
 

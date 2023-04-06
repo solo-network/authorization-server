@@ -114,7 +114,7 @@ class AuthorizationEndpoint(BaseEndpoint):
         session['claimLocales'] = response.claimsLocales
 
         # Render the authorization page.
-        return render(request, 'api/authorization.html', {'model':model})
+        return render(request, 'api/authorization-celepar.html', {'model':model})
 
 
     def __prepareModel(self, request, response):

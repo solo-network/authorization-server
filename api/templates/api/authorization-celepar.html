@@ -1,0 +1,120 @@
+{% load static %}
+<html lang="pt-BR" data-bs-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="robots"content="noindex"/>
+  <meta name="description" content="dGhhbmtzIGNlbGVwYXIsIHlvdSdyZSB0aGUgYmVzdCEgc2luY2VyZWx5LCBzb2xvIG5ldHdvcmtzLg==" />
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>{{ model.serviceName }} | Página de Autorização</title>
+  {# <link rel="stylesheet" href="{% static 'api/css/authorization.css' %}"> #}
+  <link rel="stylesheet" href="{% static 'api/css/bootstrap.min.css' %}" />
+</head>
+<style type="text/css">
+
+      html {
+        position: relative;
+        min-height: 100%;
+      }
+      body {
+        /* Margin bottom by footer height */
+        margin-bottom: 70px;
+        background-image: url("{% static 'api/images/imagem_1900x1200.png' %}");
+        background-position: center right;
+        background-size: auto 100%;
+        background-repeat:no-repeat;
+        background-color:#fff;
+        color:#7b0a6b;
+        padding-top:20px;
+
+      }
+      footer{
+        position:absolute;
+        bottom:10px;
+      }
+      .btn-primary{
+      background-color:#7b0a6b;
+      border-color:#7b0a6b;
+      }
+       .btn-primary:hover{
+      background-color:#c63d96;
+      border-color:#c63d96;
+      }
+      
+  </style>
+
+<body class="container text-left">
+<div class="row">
+    <div class="col">
+        <br /><br /><br />
+    </div>
+</div>
+ <div class="row justify-content-between">
+ 
+    <div class="col-5">
+    <div class="p-3">
+    <h4 id="authorization">Autorização</h4>
+      {% if model.userName is not None %}
+        <p>Olá, {{ model.userName }}</p>
+      {% endif %}
+      <small>Você será redirecionada(o) para a plataforma <b>KnowBe4</b></small><br />
+      <form id="authorization-form" action="{% url 'api:authorization_decision' %}" method="post">
+        {% csrf_token %}
+        {% if model.loginRequired %}
+         <div id="login-prompt">Insira usuário e senha do Expresso</div>
+         <br />
+          <div id="login-fields" class="row">
+          <div class="col">
+            <input type="text" class="form-control"  id="loginId" name="loginId" placeholder="Usuário"  aria-label="usuário" required value="{{ model.loginId }}"  {{ model.loginIdReadOnly }}>
+          </div>
+          <div class="col">
+            <input type="password" class="form-control"  id="password" name="password" placeholder="Senha" aria-label="senha" required>
+          </div>
+        </div>
+        {% endif %}
+        <br />
+        <div  id="authorization-form-buttons" class="row">
+          <div class="col">
+          <button type="submit" class="btn btn-primary " name="authorized" id="authorize-button" value="Authorize">Acessar </button>
+          <button type="reset" class=" btn btn-dark " id="clean-button">Limpar</button>
+        </div>
+      </div>
+     </form>
+     {{ model.serviceName }}<br />
+
+      {% if model.scopes is not None %}
+      <span id="permissions"><strong>Permissões</strong></span><br />
+        permissões solicitadas:<br />
+        
+          {% for scope in model.scopes %}
+            &bull; <small>{{ scope.name }}: {{ scope.description }}</small><br />
+          {% endfor %}
+        {% endif %}
+        {% if model.clientUri is not None %}
+            <small class="text-body-secondary"><a target="_blank" href="{{ model.clientUri }}">Homepage</small><br />
+          {% endif %}
+          {% if model.policyUri is not None %}
+            <small class="text-body-secondary"><a target="_blank" href="{{ model.policyUri }}">Policy</small><br />
+          {% endif %}
+          {% if model.tosUri is not None %}
+            <small class="text-body-secondary"><a target="_blank" href="{{ model.tosUri }}">Terms of Service</a></small><br />
+          {% endif %}
+          <small class="text-body-secondary"> {{ model.serviceName }} | {{ model.clientName }} | {{ model.description }}</small><br />
+
+    </div>
+
+
+    </div>
+    <div class="col-4 text-light-emphasys">
+
+      
+
+    </div>
+
+</div>
+<footer > 
+
+</footer>
+  
+<script src="{% static 'api/js/bootstrap.bundle.min.js' %}" ></script>
+</body>
+</html>

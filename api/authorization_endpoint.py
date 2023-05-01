@@ -33,7 +33,7 @@ from authlete.types.prompt                                       import Prompt
 from .authorization_page_model                                   import AuthorizationPageModel
 from .base_endpoint                                              import BaseEndpoint
 from .spi.no_interaction_handler_spi_impl                        import NoInteractionHandlerSpiImpl
-
+from django.http import QueryDict
 
 logger = logging.getLogger(__name__)
 
@@ -114,7 +114,7 @@ class AuthorizationEndpoint(BaseEndpoint):
         session['claimLocales'] = response.claimsLocales
 
         # Render the authorization page.
-        return render(request, 'api/authorization-celepar.html', {'model':model})
+        return render(request, 'api/authorization-celepar.html', {'model':model, 'uri': request.build_absolute_uri(), 'message': request.GET['message']})
 
 
     def __prepareModel(self, request, response):

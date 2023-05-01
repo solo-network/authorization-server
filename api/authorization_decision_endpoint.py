@@ -23,6 +23,9 @@ from .spi.authorization_request_decision_handler_spi_impl           import Autho
 import requests
 import json
 from django.contrib.auth.models import User
+from django.shortcuts           import redirect
+from django.http import QueryDict
+from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
 
 logger = logging.getLogger(__name__)
 
@@ -33,15 +36,26 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
 
 
     def handle(self, request):
+        
         # Authenticate the user if necessary.
-        self.__authenticateUserIfNecessary(request)
+        authentication = self.__authenticateUserIfNecessary(request)
 
         # Flag which indicates whether the user has given authorization
         # to the client application or not.
         authorized = self.__isClientAuthorized(request)
 
         # Process the authorization request according to the user's decision.
-        return self.__handleDecision(request, authorized)
+        if authentication:
+            return self.__handleDecision(request, authorized)
+        else:
+            uri = request.POST['uri']
+            uri_parts = list(urlparse(uri))
+            query = dict(parse_qsl(uri_parts[4]))
+            query.update({'message': 'Acesso negado, verifique seu usuário e senha.'})
+            uri_parts[4] = urlencode(query)
+            uri = urlunparse(uri_parts)
+            return redirect(uri)
+
 
     def __checkUserInCelepar(self, loginId, password):
         payload = {"username": loginId, "password": password}
@@ -80,6 +94,9 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             logger.debug("authorization_decision_endpoint: User authentication succeeded. The presented login ID is {}.".format(loginId))
             # Let the user log in.
             user_login = login(request, user)
+            return True
+        else:
+            return False
 
     def __isClientAuthorized(self, request):
         # If the user pressed the "Authorize" button, the request contains

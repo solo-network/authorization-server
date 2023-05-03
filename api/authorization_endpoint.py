@@ -116,8 +116,8 @@ class AuthorizationEndpoint(BaseEndpoint):
             session['claimLocales'] = response.claimsLocales
 
             error_message=None
-            if 'messages' in request.GET.keys():
-                error_message = request.GET['messages']
+            if 'message' in request.GET.keys():
+                error_message = request.GET['message']
 
             # Render the authorization page.
             return render(request, 'api/authorization-celepar.html', {'model':model, 'uri': request.build_absolute_uri(), 'message': error_message})

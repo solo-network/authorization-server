@@ -26,6 +26,7 @@ from django.contrib.auth.models import User
 from django.shortcuts           import redirect
 from django.http import QueryDict
 from urllib.parse import urlparse, parse_qsl, urlencode, urlunparse
+from logs.setup_log import logger
 
 logger = logging.getLogger(__name__)
 
@@ -36,25 +37,31 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
 
 
     def handle(self, request):
-        
-        # Authenticate the user if necessary.
-        authentication = self.__authenticateUserIfNecessary(request)
-
-        # Flag which indicates whether the user has given authorization
-        # to the client application or not.
-        authorized = self.__isClientAuthorized(request)
-
-        # Process the authorization request according to the user's decision.
-        if authentication:
-            return self.__handleDecision(request, authorized)
-        else:
-            uri = request.POST['uri']
-            uri_parts = list(urlparse(uri))
-            query = dict(parse_qsl(uri_parts[4]))
-            query.update({'message': 'Acesso negado, verifique seu usuário e senha.'})
-            uri_parts[4] = urlencode(query)
-            uri = urlunparse(uri_parts)
-            return redirect(uri)
+        try:
+            logger.debug('in handle function')
+            # Authenticate the user if necessary.
+            authentication = self.__authenticateUserIfNecessary(request)
+            logger.debug(f'authentication function result: {authenticate}')
+            # Flag which indicates whether the user has given authorization
+            # to the client application or not.
+            authorized = self.__isClientAuthorized(request)
+            logger.debug(f'authorization function debug: {authorized}')
+            # Process the authorization request according to the user's decision.
+            if authentication:
+                logger.debug('Authenticated! Returning OAuth defult flow')
+                return self.__handleDecision(request, authorized)
+            else:
+                logger.debug('Authentication failed. Returning error to template.')
+                uri = request.POST['uri']
+                uri_parts = list(urlparse(uri))
+                query = dict(parse_qsl(uri_parts[4]))
+                query.update({'message': 'Acesso negado, verifique seu usuário e senha.'})
+                uri_parts[4] = urlencode(query)
+                uri = urlunparse(uri_parts)
+                return redirect(uri)
+        except Exception as error:
+            logger.debug(error)
+            return
 
 
     def __checkUserInCelepar(self, loginId, password):

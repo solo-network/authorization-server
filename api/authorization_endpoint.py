@@ -34,8 +34,7 @@ from .authorization_page_model                                   import Authoriz
 from .base_endpoint                                              import BaseEndpoint
 from .spi.no_interaction_handler_spi_impl                        import NoInteractionHandlerSpiImpl
 from django.http import QueryDict
-
-logger = logging.getLogger(__name__)
+from logs.setup_log import logger
 
 
 class AuthorizationEndpoint(BaseEndpoint):
@@ -44,27 +43,30 @@ class AuthorizationEndpoint(BaseEndpoint):
 
 
     def handle(self, request):
-        # Query parameters or form parameters. OIDC Core 1.0 requires that
-        # the authorization endpoint support both GET and POST methods.
-        params = RequestUtility.extractParameters(request)
-        # Call Authlete's /api/auth/authorization API.
-        res = self.__callAuthorizationApi(params)
-        # 'action' in the response denotes the next action which this
-        # authorization endpoint implementation should take.
-        action = res.action
-        if action == AuthorizationAction.INTERACTION:
-            print('Interaction')
-            # Process the authorization request with user interaction.
-            return self.__handleInteraction(request, res)
-        elif action == AuthorizationAction.NO_INTERACTION:
-            print('No interaction')
-            # Process the authorization request without user interaction.
-            # The flow reaches here only when the authorization request
-            # contains 'prompt=none'.
-            return self.__handleNoInteraction(request, res)
-        else:
-            # Handle other error cases.
-            return self.__handleError(res)
+        try:
+            # Query parameters or form parameters. OIDC Core 1.0 requires that
+            # the authorization endpoint support both GET and POST methods.
+            params = RequestUtility.extractParameters(request)
+            # Call Authlete's /api/auth/authorization API.
+            res = self.__callAuthorizationApi(params)
+            # 'action' in the response denotes the next action which this
+            # authorization endpoint implementation should take.
+            action = res.action
+            if action == AuthorizationAction.INTERACTION:
+                print('Interaction')
+                # Process the authorization request with user interaction.
+                return self.__handleInteraction(request, res)
+            elif action == AuthorizationAction.NO_INTERACTION:
+                print('No interaction')
+                # Process the authorization request without user interaction.
+                # The flow reaches here only when the authorization request
+                # contains 'prompt=none'.
+                return self.__handleNoInteraction(request, res)
+            else:
+                # Handle other error cases.
+                return self.__handleError(res)
+        except Exception as error:
+            logger.debug(f'auth endpoint handle function exception: {error}')
 
 
     def __callAuthorizationApi(self, parameters):
@@ -94,27 +96,33 @@ class AuthorizationEndpoint(BaseEndpoint):
 
 
     def __handleInteraction(self, request, response):
-        logger.debug("authorization_endpoint: Processing the request with user interaction.")
+        try:
+            logger.debug("authorization_endpoint: Processing the request with user interaction.")
 
-        # Prepare a model object which is needed to render the authorization page.
-        model = self.__prepareModel(request, response)
-        print(model)
-        # In the current implementation, model is None only when there is no user
-        # who has the required subject.
-        if model is None:
-            return self.__authorizationFail(
-                response.ticket, AuthorizationFailReason.NOT_AUTHENTICATED)
+            # Prepare a model object which is needed to render the authorization page.
+            model = self.__prepareModel(request, response)
+            # In the current implementation, model is None only when there is no user
+            # who has the required subject.
+            if model is None:
+                return self.__authorizationFail(
+                    response.ticket, AuthorizationFailReason.NOT_AUTHENTICATED)
 
-        # Store some variables into the session so that they can be
-        # referred to later in authorization_decision_endpoint.py.
-        # print(request.session)
-        session = request.session
-        session['ticket']       = response.ticket
-        session['claimNames']   = response.claims
-        session['claimLocales'] = response.claimsLocales
+            # Store some variables into the session so that they can be
+            # referred to later in authorization_decision_endpoint.py.
+            # print(request.session)
+            session = request.session
+            session['ticket']       = response.ticket
+            session['claimNames']   = response.claims
+            session['claimLocales'] = response.claimsLocales
 
-        # Render the authorization page.
-        return render(request, 'api/authorization-celepar.html', {'model':model, 'uri': request.build_absolute_uri(), 'message': request.GET['message']})
+            error_message=None
+            if 'messages' in request.GET.keys():
+                error_message = request.GET['messages']
+
+            # Render the authorization page.
+            return render(request, 'api/authorization-celepar.html', {'model':model, 'uri': request.build_absolute_uri(), 'message': error_message})
+        except Exception as error:
+            logger.debug(f'error in handle interaction function: {error}')
 
 
     def __prepareModel(self, request, response):

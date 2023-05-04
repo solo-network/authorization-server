@@ -2,7 +2,7 @@ import requests
 from keycloak import KeycloakAdmin
 from keycloak import KeycloakOpenIDConnection
 import pandas
-from api.user_creation import create_user as int_create_user
+from user_creation import create_user as int_create_user
 
 def get_token():
     url = 'https://solo-identity.azurewebsites.net/realms/master/protocol/openid-connect/token'

@@ -23,7 +23,8 @@ from .authorization_decision_endpoint    import AuthorizationDecisionEndpoint
 from .authorization_endpoint             import AuthorizationEndpoint
 from .introspection_endpoint             import IntrospectionEndpoint
 from .spi.token_request_handler_spi_impl import TokenRequestHandlerSpiImpl
-from .user_info import UserInfo
+from .user_info import UserInfo, CreateUser
+
 
 @csrf_exempt
 @require_http_methods(['GET', 'POST'])
@@ -76,5 +77,11 @@ def token(request):
 def userinfo(request):
     """User Info"""
     return UserInfo(settings.AUTHLETE_API).handle(request)
+
+@require_http_methods(['GET'])
+@csrf_exempt
+def createuser(request):
+    """Create User"""
+    return CreateUser(settings.AUTHLETE_API).handle(request)
 
     

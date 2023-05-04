@@ -4,8 +4,8 @@ from authlete.django.handler.userinfo_request_handler               import UserI
 from authlete.django.handler.spi.userinfo_request_handler_spi       import UserInfoRequestHandlerSpi
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+import pandas
 
-    
 class UserInfoObject(UserInfoRequestHandlerSpi):
     def getSub(self, response):
         user = User.objects.get(id=response.subject)
@@ -51,3 +51,40 @@ class UserInfo(BaseEndpoint):
         # userinfo = UserInfoRequestHandler(self.api, UserInfoObject())
         # return userinfo.handle(request)
         return JsonResponse(res)
+    
+
+class CreateUser(BaseEndpoint):
+    def __init__(self, api):
+        super().__init__(api)
+
+    def handle(self, request):
+        func = self.handling_excel()
+        return JsonResponse({'Status': 'Done', 'Result': func})
+
+    def get_first(self, row):
+        nomes = row['Nome']
+        lista_nomes = nomes.split(' ')
+        primeiro_nome = lista_nomes[0]
+        ultimo_nome = lista_nomes[-1]
+        return ultimo_nome
+
+    def get_lastname(self, row):
+        nomes = row['Nome']
+        lista_nomes = nomes.split(' ')
+        primeiro_nome = lista_nomes[0]
+        ultimo_nome = lista_nomes[-1]
+        return primeiro_nome
+
+    def handling_excel(self):
+        dataframe_user_list = pandas.read_excel('lista.xlsx')
+        counter = 0
+        for index, row in dataframe_user_list.iterrows():
+            firstname = self.get_first(row)
+            lastname = self.get_lastname(row)
+            email = row['E-mail']
+            username = row['Login']
+            new_user=User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username)
+            new_user.save()
+            counter += 1
+
+        return f'total de usuarios criados: {counter}'

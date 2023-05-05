@@ -33,6 +33,7 @@ from authlete.types.prompt                                       import Prompt
 from .authorization_page_model                                   import AuthorizationPageModel
 from .base_endpoint                                              import BaseEndpoint
 from .spi.no_interaction_handler_spi_impl                        import NoInteractionHandlerSpiImpl
+from authlete.django.handler.authorization_request_base_handler import AuthorizationIssueRequest
 from django.http import QueryDict
 from logs.setup_log import logger
 
@@ -77,7 +78,6 @@ class AuthorizationEndpoint(BaseEndpoint):
         # Call /api/auth/authorization API.
         return self.api.authorization(req)
 
-
     def __handleNoInteraction(self, request, response):
         logger.debug("authorization_endpoint: Processing the request without user interaction.")
 
@@ -110,9 +110,17 @@ class AuthorizationEndpoint(BaseEndpoint):
             # Store some variables into the session so that they can be
             # referred to later in authorization_decision_endpoint.py.
             # print(request.session)
+
+            print(f'Response Claims: {response.claims}')
+
             session = request.session
             session['ticket']       = response.ticket
-            session['claimNames']   = response.claims
+            session['claimNames']   = {
+                                        "given_name": "Takahiko",
+                                        "family_name": "Kawasaki",
+                                        "email": "takahiko.kawasaki@example.com"
+                                    }
+
             session['claimLocales'] = response.claimsLocales
 
             error_message=None

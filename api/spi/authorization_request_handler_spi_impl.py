@@ -45,6 +45,9 @@ class AuthorizationRequestHandlerSpiImpl(AuthorizationRequestHandlerSpiAdapter):
         elif claimName == StandardClaims.EMAIL:
             if user.email:
                 return user.email
+        elif claimName == StandardClaims.USERNAME:
+            if user.username:
+                return user.username
         else:
             return None
 

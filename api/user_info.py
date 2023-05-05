@@ -1,16 +1,14 @@
 import logging
 from .base_endpoint                                                 import BaseEndpoint
-from authlete.django.handler.userinfo_request_handler               import UserInfoRequestHandler
 from authlete.django.handler.spi.userinfo_request_handler_spi       import UserInfoRequestHandlerSpi
+from authlete.django.handler.spi.userinfo_request_handler_spi_adapter import UserInfoRequestHandlerSpiAdapter
+from authlete.django.handler.userinfo_request_handler               import UserInfoRequestHandler
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 import pandas
-
+from authlete.django.web.request_utility          import RequestUtility
+from authlete.dto.userinfo_request                import UserInfoRequest
 class UserInfoObject(UserInfoRequestHandlerSpi):
-    def getSub(self, response):
-        user = User.objects.get(id=response.subject)
-        userinfo = {'sub': user.id, 'firstname': user.first_name, 'lastaname': user.last_name, 'username': user.username, 'email': user.email}
-        return userinfo
 
     def getUserClaimValue(self, subject, claimName, languageTag):
         """Get the value of a claim of a user.
@@ -38,20 +36,27 @@ class UserInfo(BaseEndpoint):
     def __init__(self, api):
         super().__init__(api)
 
+    def __callUserInfoApi(self, accessToken):
+        # Create a request for /api/auth/userinfo API.
+        try:
+            req = UserInfoRequest()
+            req.token = accessToken
+
+            # Call /api/auth/userinfo API.
+            return self.api.userinfo(req)
+        except Exception as error:
+            print(error)
 
     def handle(self, request):
-        res = {
-                "sub"         : "1",
-                "name"        : "",
-                "given_name"  : "KB4_03",
-                "family_name" : "",
-                "email"       : "",
-                "picture"     : ""
-            }
-        # userinfo = UserInfoRequestHandler(self.api, UserInfoObject())
-        # return userinfo.handle(request)
-        return JsonResponse(res)
-    
+        try:
+            # accessToken = RequestUtility.extractBearerToken(request)
+            # res = self.__callUserInfoApi(accessToken)
+
+            # content = res.responseContent
+            # print(f'content: {content}')
+            return JsonResponse({'teste': 'tete'})
+        except Exception as error:
+            print(error)
 
 class CreateUser(BaseEndpoint):
     def __init__(self, api):

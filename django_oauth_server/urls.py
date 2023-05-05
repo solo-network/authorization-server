@@ -22,5 +22,4 @@ urlpatterns = [
     path('api/',   include('api.urls')),
     path('.well-known/openid-configuration', configuration),
     path('', configuration),
-    path('userinfo/', userinfo),
 ]

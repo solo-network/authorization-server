@@ -28,5 +28,4 @@ urlpatterns = [
     path('revocation',             views.revocation),
     path('token',                  views.token),
     path('userinfo/',              views.userinfo),
-    path('create-users/',          views.createuser),
 ]

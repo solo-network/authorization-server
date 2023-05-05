@@ -30,7 +30,7 @@ else:
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://solo-authorization.azurewebsites.net', 'https://ciber.universidadecorporativa.celepar.pr.gov.br', 'https://9a18-2804-d55-5822-6300-e843-b3a3-4bd1-984c.ngrok-free.app']
+CSRF_TRUSTED_ORIGINS = ['https://solo-authorization.azurewebsites.net', 'https://ciber.universidadecorporativa.celepar.pr.gov.br', 'https://ab52-2804-d55-5822-6300-209e-747c-a75e-c31b.ngrok-free.app']
 
 # Application definition
 

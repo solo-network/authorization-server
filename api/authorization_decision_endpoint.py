@@ -42,13 +42,14 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             # Authenticate the user if necessary.
             authentication = self.__authenticateUserIfNecessary(request)
             logger.debug(f'authentication function result: {authenticate}')
+            print(f'authentication function result: {authenticate}')
             # Flag which indicates whether the user has given authorization
             # to the client application or not.
             authorized = self.__isClientAuthorized(request)
             logger.debug(f'authorization function debug: {authorized}')
             # Process the authorization request according to the user's decision.
             if authentication:
-                logger.debug('Authenticated! Returning OAuth defult flow')
+                print('Authenticated! Returning OAuth defult flow')
                 return self.__handleDecision(request, authorized)
             else:
                 logger.debug('Authentication failed. Returning error to template.')
@@ -112,13 +113,16 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
 
 
     def __handleDecision(self, request, authorized):
-        spi     = AuthorizationRequestDecisionHandlerSpiImpl(request, authorized)
-        handler = AuthorizationRequestDecisionHandler(self.api, spi)
+        try:
+            spi     = AuthorizationRequestDecisionHandlerSpiImpl(request, authorized)
+            handler = AuthorizationRequestDecisionHandler(self.api, spi)
+            # Parameters contained in the response from /api/auth/authorization API.
+            session      = request.session
+            ticket       = session.get('ticket')
+            claimNames   = session.get('claimNames')
+            claimLocales = session.get('claimLocales')
 
-        # Parameters contained in the response from /api/auth/authorization API.
-        session      = request.session
-        ticket       = session.get('ticket')
-        claimNames   = session.get('claimNames')
-        claimLocales = session.get('claimLocales')
-
-        return handler.handle(ticket, claimNames, claimLocales)
+            return handler.handle(ticket, claimNames, claimLocales)
+        except Exception as error:
+            print(error)
+  

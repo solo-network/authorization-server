@@ -15,11 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls    import include, path
-from api.views      import configuration, userinfo
+from api.views      import configuration, userinfo, root
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/',   include('api.urls')),
     path('.well-known/openid-configuration', configuration),
-    path('', configuration),
+    path('configuration/', configuration),
+    path('', root)
 ]

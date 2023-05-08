@@ -8,6 +8,9 @@ from django.http import JsonResponse
 import pandas
 from authlete.django.web.request_utility          import RequestUtility
 from authlete.dto.userinfo_request                import UserInfoRequest
+from django.shortcuts           import redirect
+
+
 class UserInfoObject(UserInfoRequestHandlerSpi):
 
     def getUserClaimValue(self, subject, claimName, languageTag):
@@ -93,3 +96,10 @@ class CreateUser(BaseEndpoint):
             counter += 1
 
         return f'total de usuarios criados: {counter}'
+    
+class Root(BaseEndpoint):
+    def __init__(self, api):
+        super().__init__(api)
+
+    def handle(self, request):
+        return redirect('https://www.universidadecorporativa.celepar.pr.gov.br/')

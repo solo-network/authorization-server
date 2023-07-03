@@ -84,13 +84,15 @@ class CreateUser(BaseEndpoint):
         return primeiro_nome
 
     def handling_excel(self):
-        dataframe_user_list = pandas.read_excel('lista.xlsx')
+        # dataframe_user_list = pandas.read_excel('lista.xlsx')
+        dataframe_user_list = pandas.read_csv('kb4.csv', usecols=['uid', 'mail', 'givenName', 'sn'])
+        print(dataframe_user_list)
         counter = 0
         for index, row in dataframe_user_list.iterrows():
-            firstname = self.get_first(row)
-            lastname = self.get_lastname(row)
-            email = row['E-mail']
-            username = row['Login']
+            firstname = row['givenName']
+            lastname = row['sn']
+            email = row['mail']
+            username = row['uid']
             new_user=User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username)
             new_user.save()
             counter += 1

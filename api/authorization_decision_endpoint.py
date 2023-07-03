@@ -89,6 +89,7 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             return
 
         loginId  = request.POST.get('loginId')
+        loginId  = loginId.lower()
         password = request.POST.get('password')
         check_in_celepar = self.__checkUserInCelepar(loginId, password)
         if check_in_celepar:
@@ -101,7 +102,7 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
                 return
             logger.debug("authorization_decision_endpoint: User authentication succeeded. The presented login ID is {}.".format(loginId))
             # Let the user log in.
-            user_login = login(request, user)
+            login(request, user)
             return True
         else:
             return False

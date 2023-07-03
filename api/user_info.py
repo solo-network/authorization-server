@@ -1,4 +1,3 @@
-import logging
 from .base_endpoint                                                 import BaseEndpoint
 from authlete.django.handler.spi.userinfo_request_handler_spi       import UserInfoRequestHandlerSpi
 from authlete.django.handler.spi.userinfo_request_handler_spi_adapter import UserInfoRequestHandlerSpiAdapter
@@ -9,6 +8,7 @@ import pandas
 from authlete.django.web.request_utility          import RequestUtility
 from authlete.dto.userinfo_request                import UserInfoRequest
 from django.shortcuts           import redirect
+from logs.setup_log import logging
 
 
 class UserInfoObject(UserInfoRequestHandlerSpi):
@@ -86,18 +86,20 @@ class CreateUser(BaseEndpoint):
     def handling_excel(self):
         # dataframe_user_list = pandas.read_excel('lista.xlsx')
         dataframe_user_list = pandas.read_csv('kb4.csv', usecols=['uid', 'mail', 'givenName', 'sn'])
-        print(dataframe_user_list)
         counter = 0
-        for index, row in dataframe_user_list.iterrows():
-            firstname = row['givenName']
-            lastname = row['sn']
-            email = row['mail']
-            username = row['uid']
-            new_user=User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username)
-            new_user.save()
-            counter += 1
+        try:
+            for index, row in dataframe_user_list.iterrows():
+                firstname = row['givenName']
+                lastname = row['sn']
+                email = row['mail']
+                username = row['uid']
+                new_user=User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username)
+                new_user.save()
+                counter += 1
 
-        return f'total de usuarios criados: {counter}'
+            return f'total de usuarios criados: {counter}'
+        except Exception as error:
+            logging.debug(error)
     
 class Root(BaseEndpoint):
     def __init__(self, api):

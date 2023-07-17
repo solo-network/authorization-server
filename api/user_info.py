@@ -106,4 +106,4 @@ class Root(BaseEndpoint):
         super().__init__(api)
 
     def handle(self, request):
-        return redirect('https://www.universidadecorporativa.celepar.pr.gov.br/')
+        return redirect('https://training.knowbe4.com/auth/saml/5a6d8defa9be6')

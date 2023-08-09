@@ -9,6 +9,8 @@ from authlete.django.web.request_utility          import RequestUtility
 from authlete.dto.userinfo_request                import UserInfoRequest
 from django.shortcuts           import redirect
 from logs.setup_log import logging
+import json
+from .decorators import allow_specific_origin
 
 
 class UserInfoObject(UserInfoRequestHandlerSpi):
@@ -82,6 +84,33 @@ class CreateUser(BaseEndpoint):
         primeiro_nome = lista_nomes[0]
         ultimo_nome = lista_nomes[-1]
         return primeiro_nome
+
+    @allow_specific_origin
+    def handle_user_updates(self, user_list):
+        try:
+            # Iterate through the user list and update or create users
+            for user_data in user_list:
+                username = user_data['username']
+                existing_user = User.objects.filter(username=username).first()
+
+                if existing_user:
+                    # Update user attributes
+                    for attr, value in user_data.items():
+                        if attr != 'username':
+                            setattr(existing_user, attr, value)
+                    existing_user.save()
+                else:
+                    # Create a new user
+                    User.objects.create_user(**user_data)
+
+            # Delete users not present in the received list
+            existing_usernames = [user['username'] for user in user_list]
+            User.objects.exclude(username__in=existing_usernames).delete()
+
+            return 'User updates handled successfully'
+        except Exception as error:
+            logging.debug(error)
+            return 'Error handling user updates'
 
     def handling_excel(self):
         # dataframe_user_list = pandas.read_excel('lista.xlsx')

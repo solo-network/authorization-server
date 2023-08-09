@@ -83,3 +83,11 @@ def userinfo(request):
 def root(request):
     """User Info"""
     return Root(settings.AUTHLETE_API).handle(request)
+
+@require_http_methods(['POST'])
+@csrf_exempt
+def handle_user_updates(request):
+    if request.method == 'POST':
+        update_data = request.body.decode('utf-8')
+        response_message = CreateUser(settings.AUTHLETE_API).handle_user_updates(update_data)
+        return JsonResponse({'message': response_message})

@@ -14,8 +14,6 @@
 # language governing permissions and limitations under the
 # License.
 
-
-import logging
 import time
 from django.contrib.auth        import logout
 from django.contrib.auth.models import User

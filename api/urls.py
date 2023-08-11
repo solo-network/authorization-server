@@ -28,5 +28,5 @@ urlpatterns = [
     path('revocation',             views.revocation),
     path('token',                  views.token),
     path('userinfo/',              views.userinfo),
-    path('userupdates/',          views.handle_user_updates, name='handle_user_updates'),
+    path('userupdates/',           views.handle_user_updates, name='handle_user_updates'),
 ]

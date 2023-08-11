@@ -5,7 +5,7 @@ services:
     container_name: solo-Authorizatio-Server
     image: vsc-flask_auth_server-2b9610781ae4e2a63b126161fd2f4d2b
     build: .
-    command: ./.docker/start-app.sh
+    # command: ./.docker/start-app.sh
     volumes:
       - .:/home/python/app
     networks:

@@ -11,6 +11,7 @@ from django.shortcuts           import redirect
 from logs.setup_log import logging
 import json
 from .decorators import allow_specific_origin
+from datetime import datetime
 
 
 class UserInfoObject(UserInfoRequestHandlerSpi):
@@ -105,29 +106,15 @@ class CreateUser(BaseEndpoint):
                     # Create a new user
                     User.objects.create_user(**user_data)
 
-            # Delete users not present in the received list
-            # existing_usernames = [user['username'] for user in user_list]
-            # for user in User.objects.exclude(username__in=existing_usernames):
-            #     user.is_active = False
-            #     user.save()
-
-            # Fetch and display all users saved in the database
-            # saved_users = User.objects.all()
-            # print("-------")
-            # for user in saved_users:
-            #     print(f"User: {user.username}, {user.email}, {user.first_name}, {user.is_active}")
-
             # Count total number of users and active users
             total_users = User.objects.count()
             active_users = User.objects.filter(is_active=True).count()
-            print(f"Processed users: {len(user_list)}")
-            print(f"Total number of users: {total_users}")
-            print(f"Number of active users: {active_users}")
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logging.debug(f"Start of update: {current_time}")
+            logging.debug(f"Processed users: {len(user_list)}")
+            logging.debug(f"Total number of users: {total_users}")
+            logging.debug(f"Number of active users: {active_users}")
             print("---")
-            # for user in saved_users:
-            #     user_fields = [(field.name, getattr(user, field.name)) for field in User._meta.fields]
-            #     user_info = ', '.join(f"{name}: {value}" for name, value in user_fields)
-            #     print(f"User: {user_info}")
 
             return 'User updates handled successfully'
         except Exception as error:

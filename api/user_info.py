@@ -116,7 +116,6 @@ class CreateUser(BaseEndpoint):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'is_active': user.is_active,
-                    # Add other fields as needed
                 }
                 users_list.append(user_data)
         else:
@@ -135,7 +134,6 @@ class CreateUser(BaseEndpoint):
                     'first_name': user.first_name,
                     'last_name': user.last_name,
                     'is_active': user.is_active,
-                    # Add other fields as needed
                 }
                 users_list.append(user_data)
 
@@ -144,6 +142,15 @@ class CreateUser(BaseEndpoint):
     def deactivate_users(self):
         User.objects.update(is_active=False)
         return JsonResponse({'message': 'All users have been deactivated'})
+
+    def activate_user(request, username):
+        try:
+            user = User.objects.get(username=username)
+            user.is_active = True
+            user.save()
+            return JsonResponse({'message': f'User {username} activated successfully'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': f'User with username {username} does not exist.'}, status=404)
 
     def handle_user_updates(self, user_list):
         try:

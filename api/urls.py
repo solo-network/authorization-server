@@ -30,5 +30,6 @@ urlpatterns = [
     path('userinfo/',              views.userinfo),
     path('userupdates/',           views.handle_user_updates, name='handle_user_updates'),
     path('_user/<str:username>',   views.handle_user, name='handle_user'),
-    path('_users/<int:page>/',      views.handle_users, name='handle_users'),
+    path('_users/<int:page>/',     views.handle_users, name='handle_users'),
+    path('_de_users/',             views.deactivate_users, name='deactivate_users'),
 ]

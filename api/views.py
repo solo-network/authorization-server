@@ -93,6 +93,10 @@ def handle_user(request, username):
 def handle_users(request, page):
     return CreateUser(settings.AUTHLETE_API).get_users_by_page(page)
 
+@csrf_exempt
+def deactivate_users(request):
+    return CreateUser(settings.AUTHLETE_API).deactivate_users()
+
 @require_http_methods(['POST'])
 @csrf_exempt
 def handle_user_updates(request):

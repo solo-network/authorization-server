@@ -130,4 +130,6 @@ dmypy.json
 
 # data files
 *.ods
-*.json
+backups/
+
+.DS_Store

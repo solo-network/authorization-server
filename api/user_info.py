@@ -11,7 +11,9 @@ from django.shortcuts           import redirect
 from logs.setup_log import logging
 import json
 from .decorators import allow_specific_origin
-
+from datetime import datetime
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage
 
 class UserInfoObject(UserInfoRequestHandlerSpi):
 
@@ -84,12 +86,52 @@ class CreateUser(BaseEndpoint):
         primeiro_nome = lista_nomes[0]
         ultimo_nome = lista_nomes[-1]
         return primeiro_nome
+    
+    def get_user_by_username(self, username):
+        try:
+            user = User.objects.get(username=username)
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                # Add other fields as needed
+            }
+            logging.debug(user_data)
+            return JsonResponse(user_data)
+        except ObjectDoesNotExist:
+            response_data = {'error': f"User with username {username} does not exist."}
+            return JsonResponse(response_data, status=404)
 
-    @allow_specific_origin
+    def get_users_by_page(self, page):
+        users = User.objects.all()
+        paginator = Paginator(users, 20)
+
+        try:
+            users_page = paginator.page(page)
+        except EmptyPage:
+            # If the page is out of range, return an empty result
+            return JsonResponse({'error': 'Page out of range'}, status=404)
+
+        users_list = []
+        for user in users_page:
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                # Add other fields as needed
+            }
+            users_list.append(user_data)
+
+        return JsonResponse({'users': users_list})
+
     def handle_user_updates(self, user_list):
         try:
             user_list = json.loads(user_list)
-            
+
             # Iterate through the user list and update or create users
             for user_data in user_list:
                 username = user_data['username']
@@ -105,9 +147,15 @@ class CreateUser(BaseEndpoint):
                     # Create a new user
                     User.objects.create_user(**user_data)
 
-            # Delete users not present in the received list
-            existing_usernames = [user['username'] for user in user_list]
-            User.objects.exclude(username__in=existing_usernames).delete()
+            # Count total number of users and active users
+            total_users = User.objects.count()
+            active_users = User.objects.filter(is_active=True).count()
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            logging.debug(f"Start of update: {current_time}")
+            logging.debug(f"Processed users: {len(user_list)}")
+            logging.debug(f"Total number of users: {total_users}")
+            logging.debug(f"Number of active users: {active_users}")
+            print("---")
 
             return 'User updates handled successfully'
         except Exception as error:

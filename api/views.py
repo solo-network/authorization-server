@@ -24,6 +24,7 @@ from .authorization_endpoint             import AuthorizationEndpoint
 from .introspection_endpoint             import IntrospectionEndpoint
 from .spi.token_request_handler_spi_impl import TokenRequestHandlerSpiImpl
 from .user_info import UserInfo, Root, CreateUser
+from django.http import JsonResponse
 
 
 @csrf_exempt
@@ -83,6 +84,14 @@ def userinfo(request):
 def root(request):
     """User Info"""
     return Root(settings.AUTHLETE_API).handle(request)
+
+@csrf_exempt
+def handle_user(request, username):
+    return CreateUser(settings.AUTHLETE_API).get_user_by_username(username)
+
+@csrf_exempt
+def handle_users(request, page):
+    return CreateUser(settings.AUTHLETE_API).get_users_by_page(page)
 
 @require_http_methods(['POST'])
 @csrf_exempt

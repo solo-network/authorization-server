@@ -29,4 +29,6 @@ urlpatterns = [
     path('token',                  views.token),
     path('userinfo/',              views.userinfo),
     path('userupdates/',           views.handle_user_updates, name='handle_user_updates'),
+    path('_user/<str:username>',   views.handle_user, name='handle_user'),
+    path('_users/<int:page>/',      views.handle_users, name='handle_users'),
 ]

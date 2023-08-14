@@ -12,7 +12,8 @@ from logs.setup_log import logging
 import json
 from .decorators import allow_specific_origin
 from datetime import datetime
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage
 
 class UserInfoObject(UserInfoRequestHandlerSpi):
 
@@ -85,8 +86,48 @@ class CreateUser(BaseEndpoint):
         primeiro_nome = lista_nomes[0]
         ultimo_nome = lista_nomes[-1]
         return primeiro_nome
-
     
+    def get_user_by_username(self, username):
+        try:
+            user = User.objects.get(username=username)
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                # Add other fields as needed
+            }
+            logging.debug(user_data)
+            return JsonResponse(user_data)
+        except ObjectDoesNotExist:
+            response_data = {'error': f"User with username {username} does not exist."}
+            return JsonResponse(response_data, status=404)
+
+    def get_users_by_page(self, page):
+        users = User.objects.all()
+        paginator = Paginator(users, 20)
+
+        try:
+            users_page = paginator.page(page)
+        except EmptyPage:
+            # If the page is out of range, return an empty result
+            return JsonResponse({'error': 'Page out of range'}, status=404)
+
+        users_list = []
+        for user in users_page:
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_active': user.is_active,
+                # Add other fields as needed
+            }
+            users_list.append(user_data)
+
+        return JsonResponse({'users': users_list})
+
     def handle_user_updates(self, user_list):
         try:
             user_list = json.loads(user_list)

@@ -85,6 +85,14 @@ def root(request):
     """User Info"""
     return Root(settings.AUTHLETE_API).handle(request)
 
+@csrf_exempt
+def handle_user(request, username):
+    return CreateUser(settings.AUTHLETE_API).get_user_by_username(username)
+
+@csrf_exempt
+def handle_users(request, page):
+    return CreateUser(settings.AUTHLETE_API).get_users_by_page(page)
+
 @require_http_methods(['POST'])
 @csrf_exempt
 def handle_user_updates(request):

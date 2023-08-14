@@ -88,6 +88,8 @@ class CreateUser(BaseEndpoint):
     @allow_specific_origin
     def handle_user_updates(self, user_list):
         try:
+            user_list = json.loads(user_list)
+            
             # Iterate through the user list and update or create users
             for user_data in user_list:
                 username = user_data['username']

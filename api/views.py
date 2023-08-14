@@ -24,6 +24,7 @@ from .authorization_endpoint             import AuthorizationEndpoint
 from .introspection_endpoint             import IntrospectionEndpoint
 from .spi.token_request_handler_spi_impl import TokenRequestHandlerSpiImpl
 from .user_info import UserInfo, Root, CreateUser
+from django.http import JsonResponse
 
 
 @csrf_exempt

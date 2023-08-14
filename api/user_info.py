@@ -85,11 +85,11 @@ class CreateUser(BaseEndpoint):
         ultimo_nome = lista_nomes[-1]
         return primeiro_nome
 
-    @allow_specific_origin
+    
     def handle_user_updates(self, user_list):
         try:
             user_list = json.loads(user_list)
-            
+
             # Iterate through the user list and update or create users
             for user_data in user_list:
                 username = user_data['username']
@@ -106,8 +106,28 @@ class CreateUser(BaseEndpoint):
                     User.objects.create_user(**user_data)
 
             # Delete users not present in the received list
-            existing_usernames = [user['username'] for user in user_list]
-            User.objects.exclude(username__in=existing_usernames).delete()
+            # existing_usernames = [user['username'] for user in user_list]
+            # for user in User.objects.exclude(username__in=existing_usernames):
+            #     user.is_active = False
+            #     user.save()
+
+            # Fetch and display all users saved in the database
+            # saved_users = User.objects.all()
+            # print("-------")
+            # for user in saved_users:
+            #     print(f"User: {user.username}, {user.email}, {user.first_name}, {user.is_active}")
+
+            # Count total number of users and active users
+            total_users = User.objects.count()
+            active_users = User.objects.filter(is_active=True).count()
+            print(f"Processed users: {len(user_list)}")
+            print(f"Total number of users: {total_users}")
+            print(f"Number of active users: {active_users}")
+            print("---")
+            # for user in saved_users:
+            #     user_fields = [(field.name, getattr(user, field.name)) for field in User._meta.fields]
+            #     user_info = ', '.join(f"{name}: {value}" for name, value in user_fields)
+            #     print(f"User: {user_info}")
 
             return 'User updates handled successfully'
         except Exception as error:

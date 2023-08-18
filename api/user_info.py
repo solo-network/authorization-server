@@ -171,9 +171,11 @@ class CreateUser(BaseEndpoint):
                     # Create a new user
                     User.objects.create_user(**user_data)
 
+            # Users to always keep active
+            always_active_users = ["root", "kb4_04", "Sivirmond", "kb4_cel_001"]
+            
             # Deactivate users not in the provided list in a batch operation
-            usernames = {user_data['username'] for user_data in user_list}
-            User.objects.filter(is_active=True).exclude(username__in=usernames).update(is_active=False) 
+            User.objects.filter(is_active=True).exclude(username__in=[user_data['username'] for user_data in user_list] + always_active_users).update(is_active=False)
 
             # Count total number of users and active users
             total_users = User.objects.count()

@@ -171,6 +171,10 @@ class CreateUser(BaseEndpoint):
                     # Create a new user
                     User.objects.create_user(**user_data)
 
+            # Deactivate users not in the provided list in a batch operation
+            usernames = {user_data['username'] for user_data in user_list}
+            User.objects.filter(is_active=True).exclude(username__in=usernames).update(is_active=False) 
+
             # Count total number of users and active users
             total_users = User.objects.count()
             active_users = User.objects.filter(is_active=True).count()

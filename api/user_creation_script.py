@@ -89,7 +89,7 @@ def handling_excel():
     return f'total de usuarios criados: {counter}'
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # tk = get_token()
     # # print(tk['access_token'])
 
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     # user = create_user(tk['access_token'])
     # print(user)
 
-    print(handling_excel())
+    # print(handling_excel())

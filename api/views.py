@@ -94,6 +94,10 @@ def activate_user(request, username):
     return CreateUser(settings.AUTHLETE_API).activate_user(username)
 
 @csrf_exempt
+def deactivate_user(request, username):
+    return CreateUser(settings.AUTHLETE_API).deactivate_user(username)
+
+@csrf_exempt
 def handle_users(request, page):
     return CreateUser(settings.AUTHLETE_API).get_users_by_page(page)
 

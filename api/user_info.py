@@ -151,6 +151,15 @@ class CreateUser(BaseEndpoint):
             return JsonResponse({'message': f'User {username} activated successfully'})
         except User.DoesNotExist:
             return JsonResponse({'error': f'User with username {username} does not exist.'}, status=404)
+    
+    def deactivate_user(request, username):
+        try:
+            user = User.objects.get(username=username)
+            user.is_active = False
+            user.save()
+            return JsonResponse({'message': f'User {username} deactivated successfully'})
+        except User.DoesNotExist:
+            return JsonResponse({'error': f'User with username {username} does not exist.'}, status=404)
 
     def handle_user_updates(self, user_list):
         try:

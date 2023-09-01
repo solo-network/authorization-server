@@ -32,5 +32,7 @@ urlpatterns = [
     path('_user/<str:username>',   views.handle_user, name='handle_user'),
     path('_users/<int:page>/',     views.handle_users, name='handle_users'),
     path('_de_users/',             views.deactivate_users, name='deactivate_users'),
+    path('_deact_user/<str:username>/', views.deactivate_user, name='deactivate_user'),
     path('_act_user/<str:username>/', views.activate_user, name='activate_user'),
+    path('_ruser/<str:username>/', views.remove_user, name='remove_user'),
 ]

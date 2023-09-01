@@ -69,10 +69,6 @@ class CreateUser(BaseEndpoint):
     def __init__(self, api):
         super().__init__(api)
 
-    def handle(self, request):
-        func = self.handling_excel()
-        return JsonResponse({'Status': 'Done', 'Result': func})
-
     def get_first(self, row):
         nomes = row['Nome']
         lista_nomes = nomes.split(' ')
@@ -191,6 +187,13 @@ class CreateUser(BaseEndpoint):
             # Users to always keep active
             always_active_users = ["root", "kb4_04", "Sivirmond", "kb4_cel_001"]
             
+            users_to_delete = User.objects.filter(is_active=True).exclude(username__in=[user_data['username'] for user_data in user_list] + always_active_users)
+
+            for user in users_to_delete:
+                logging.debug(f"Deleting user: {user.username}, Email: {user.email}")
+
+            users_to_delete.delete()
+
             # Deactivate users not in the provided list in a batch operation
             User.objects.filter(is_active=True).exclude(username__in=[user_data['username'] for user_data in user_list] + always_active_users).update(is_active=False)
 
@@ -207,24 +210,6 @@ class CreateUser(BaseEndpoint):
         except Exception as error:
             logging.debug(error)
             return 'Error handling user updates'
-
-    def handling_excel(self):
-        # dataframe_user_list = pandas.read_excel('lista.xlsx')
-        dataframe_user_list = pandas.read_csv('kb4.csv', usecols=['uid', 'mail', 'givenName', 'sn'])
-        counter = 0
-        try:
-            for index, row in dataframe_user_list.iterrows():
-                firstname = row['givenName']
-                lastname = row['sn']
-                email = row['mail']
-                username = row['uid']
-                new_user=User.objects.create_user(first_name=firstname, last_name=lastname, email=email, username=username)
-                new_user.save()
-                counter += 1
-
-            return f'total de usuarios criados: {counter}'
-        except Exception as error:
-            logging.debug(error)
     
 class Root(BaseEndpoint):
     def __init__(self, api):

@@ -192,7 +192,7 @@ class CreateUser(BaseEndpoint):
             for user in users_to_delete:
                 logging.debug(f"Deleting user: {user.username}, Email: {user.email}")
 
-            users_to_delete.delete()
+            # users_to_delete.delete()
 
             # Deactivate users not in the provided list in a batch operation
             User.objects.filter(is_active=True).exclude(username__in=[user_data['username'] for user_data in user_list] + always_active_users).update(is_active=False)

@@ -84,6 +84,7 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
                 user.save()
 
     def __authenticateUserIfNecessary(self, request):
+        logger.debug("Check authentication for login ID {}.".format(request.POST.get('loginId')))
         if request.user.is_authenticated:
             # The user has already logged in.
             return

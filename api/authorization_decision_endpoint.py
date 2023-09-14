@@ -48,9 +48,6 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             authorized = self.__isClientAuthorized(request)
             logger.debug(f'authorization function debug: {authorized}')
 
-            # Log data (body)
-            logger.debug('Body: %s', request.data.decode('utf-8'))
-
             # Process the authorization request according to the user's decision.
             if authentication:
                 print('Authenticated! Returning OAuth defult flow')

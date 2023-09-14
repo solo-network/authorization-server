@@ -48,10 +48,6 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             authorized = self.__isClientAuthorized(request)
             logger.debug(f'authorization function debug: {authorized}')
 
-            # Log headers
-            for header, value in request.headers:
-                logger.debug('Header: %s: %s', header, value)
-
             # Log data (body)
             logger.debug('Body: %s', request.data.decode('utf-8'))
 

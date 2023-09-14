@@ -47,9 +47,6 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
             # to the client application or not.
             authorized = self.__isClientAuthorized(request)
             logger.debug(f'authorization function debug: {authorized}')
-            # Log method and URL
-            logger.debug('Method: %s', request.method)
-            logger.debug('URL: %s', request.url)
 
             # Log headers
             for header, value in request.headers:

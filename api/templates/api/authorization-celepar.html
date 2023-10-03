@@ -1,4 +1,13 @@
 {% load static %}
+<script>
+  document.getElementById("authorization-form").addEventListener("submit", function(e){
+      var username = document.getElementById("loginId").value;
+      if (username.includes("@")) {
+          alert("Digite um usuário válido. Endereços de email não são permitidos.");
+          e.preventDefault(); 
+      }
+  });
+  </script>
 <html lang="pt-BR" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">

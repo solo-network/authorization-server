@@ -1,22 +1,4 @@
 {% load static %}
-<script type="text/javascript">
-  document.getElementById('authorization-form').addEventListener('submit', function (e) {
-      var username = document.getElementById('loginId').value;
-      var usernameError = document.getElementById('usernameError');
-
-      // Regex for validating email format
-      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-      if (emailRegex.test(username)) {
-          // If username is an email, prevent form submission and show error message
-          e.preventDefault();
-          usernameError.style.display = 'block';
-      } else {
-          // If username is not an email, hide any previous error message
-          usernameError.style.display = 'none';
-      }
-  });
-</script>
 
 <html lang="pt-BR" data-bs-theme="light">
 <head>
@@ -144,5 +126,23 @@
 </footer>
   
 <script src="{% static 'api/js/bootstrap.bundle.min.js' %}" ></script>
+<script type="text/javascript">
+  document.getElementById('authorization-form').addEventListener('submit', function (e) {
+      var username = document.getElementById('loginId').value;
+      var usernameError = document.getElementById('usernameError');
+
+      // Regex for validating email format
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailRegex.test(username)) {
+          // If username is an email, prevent form submission and show error message
+          e.preventDefault();
+          usernameError.style.display = 'block';
+      } else {
+          // If username is not an email, hide any previous error message
+          usernameError.style.display = 'none';
+      }
+  });
+</script>
 </body>
 </html>

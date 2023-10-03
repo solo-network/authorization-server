@@ -1,13 +1,23 @@
 {% load static %}
-<script>
-  document.getElementById("authorization-form").addEventListener("submit", function(e){
-      var username = document.getElementById("loginId").value;
-      if (username.includes("@")) {
-          alert("Digite um usuário válido. Endereços de email não são permitidos.");
-          e.preventDefault(); 
+<script type="text/javascript">
+  document.getElementById('authorization-form').addEventListener('submit', function (e) {
+      var username = document.getElementById('loginId').value;
+      var usernameError = document.getElementById('usernameError');
+
+      // Regex for validating email format
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailRegex.test(username)) {
+          // If username is an email, prevent form submission and show error message
+          e.preventDefault();
+          usernameError.style.display = 'block';
+      } else {
+          // If username is not an email, hide any previous error message
+          usernameError.style.display = 'none';
       }
   });
-  </script>
+</script>
+
 <html lang="pt-BR" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
@@ -74,6 +84,7 @@
           <div id="login-fields" class="row">
           <div class="col">
             <input type="text" class="form-control"  id="loginId" name="loginId" placeholder="Usuário"  aria-label="usuário" required value="{{ model.loginId }}"  {{ model.loginIdReadOnly }}>
+            <span id="usernameError" style="color: red; display: none;">Digite um usuário válido. Endereços de email não são permitidos.</span>
           </div>
           <div class="col">
             <input type="password" class="form-control"  id="password" name="password" placeholder="Senha" aria-label="senha" required>

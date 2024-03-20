@@ -67,12 +67,14 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
 
 
     def __checkUserInCelepar(self, loginId, password):
+        logger.debug("authorization_decision_endpoint: Checking user in Celepar: {}.".format(loginId))
         payload = {"username": loginId, "password": password}
         header = {'Content-Type': 'application/json'}
         response = requests.post('https://api.expresso.pr.gov.br/celepar/user/bind', headers=header, data=json.dumps(payload))
         return bool(response.json()['result'])
 
     def __checkIfUserExistsInDatabase(self, loginId, password):
+        logger.debug("authorization_decision_endpoint: Checking user in Database: {}.".format(loginId))
         user = User.objects.filter(username=loginId).exists()
         if not user:
             user = User.objects.create_user(username=loginId, password=password)
@@ -97,6 +99,7 @@ class AuthorizationDecisionEndpoint(BaseEndpoint):
         if check_in_celepar:
             self.__checkIfUserExistsInDatabase(loginId, password)
             # Authenticate the user.
+            logger.debug("authorization_decision_endpoint: Authenticating: {}.".format(loginId))
             user = authenticate(username=loginId, password=password)
             if user is None:
                 # User authentication failed.
